@@ -1,6 +1,6 @@
 const express = require('express');
-const userController = require('../controllers/userController');
 const { check } = require('express-validator');
+const userController = require('../controllers/userController');
 const isAdminMiddleware = require('../middlewares/isAdminMiddleware');
 const isLoggedInMiddleware = require('../middlewares/isLoggedInMiddleware');
 
@@ -41,7 +41,7 @@ router.post(
     .withMessage('Must contain a number')
     .matches(/[A-Za-z]/)
     .withMessage('Must contain a character'),
-  userController.sungUp
+  userController.sungUp,
 );
 
 /**
@@ -148,7 +148,7 @@ router.post(
     .withMessage('Must contain a number')
     .matches(/[A-Za-z]/)
     .withMessage('Must contain a character'),
-  userController.resetPassword
+  userController.resetPassword,
 );
 
 /**
@@ -217,7 +217,7 @@ router.post(
     .withMessage('Must contain a number')
     .matches(/[A-Za-z]/)
     .withMessage('Must contain a character'),
-  userController.changePassword
+  userController.changePassword,
 );
 
 /**
@@ -251,7 +251,7 @@ router.post(
   '/change-email',
   isLoggedInMiddleware,
   check('email').isEmail().withMessage('Email is invalid'),
-  userController.changeEmail
+  userController.changeEmail,
 );
 
 /**
@@ -308,7 +308,7 @@ router.post('/login', userController.login);
 router.post(
   '/forgot-password',
   check('email').isEmail().withMessage('Email is invalid'),
-  userController.forgotPassword
+  userController.forgotPassword,
 );
 
 /**
@@ -348,7 +348,7 @@ router.put(
   '/change-role/:id',
   isAdminMiddleware,
   check('role').isIn(['user', 'admin']).withMessage('Role is not available'),
-  userController.changeRole
+  userController.changeRole,
 );
 
 /**

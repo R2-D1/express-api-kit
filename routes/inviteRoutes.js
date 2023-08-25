@@ -1,6 +1,6 @@
 const express = require('express');
-const inviteController = require('../controllers/inviteController');
 const { check } = require('express-validator');
+const inviteController = require('../controllers/inviteController');
 const isAdminMiddleware = require('../middlewares/isAdminMiddleware');
 
 const router = express.Router();
@@ -30,7 +30,7 @@ router.post(
   '/',
   isAdminMiddleware,
   check('email').isEmail().withMessage('Email is invalid'),
-  inviteController.createInvite
+  inviteController.createInvite,
 );
 
 /**

@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+
 const isLoggedInMiddleware = (request, response, next) => {
   const authToken = request.headers.authorization?.split(' ')[1];
 
@@ -19,6 +20,8 @@ const isLoggedInMiddleware = (request, response, next) => {
   }
 
   next();
+
+  return null;
 };
 
 module.exports = isLoggedInMiddleware;

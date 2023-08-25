@@ -1,19 +1,20 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+
+mongoose.set('strictQuery', true);
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 const {
   MONGO_USERNAME,
   MONGO_PASSWORD,
   MONGO_IP,
   MONGO_PORT,
 } = require('./config/config');
-mongoose.set('strictQuery', true);
-const swaggerJsdoc = require('swagger-jsdoc');
-const swaggerUi = require('swagger-ui-express');
+
 const apiV1Router = express.Router();
 
 const mongoURL = `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_IP}:${MONGO_PORT}/express-api-kit`;
-console.log(mongoURL);
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -23,8 +24,7 @@ const inviteRouter = require('./routes/inviteRoutes');
 
 mongoose
   .connect(mongoURL)
-  .then(() => console.log('Successfully connected to DB'))
-  .catch((error) => console.log(error));
+  .catch((error) => console.error(error));
 
 app.use(express.json());
 app.enable('trust proxy');
@@ -60,4 +60,4 @@ const specs = swaggerJsdoc(options);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
-app.listen(port, () => console.log(`Listening on port ${port}`));
+app.listen(port);

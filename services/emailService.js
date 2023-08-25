@@ -153,7 +153,7 @@ const sendEmail = async (
   title,
   description,
   btnText,
-  btnLink
+  btnLink,
 ) => {
   try {
     const transporter = nodemailer.createTransport({
@@ -169,19 +169,18 @@ const sendEmail = async (
     await transporter.sendMail({
       from: process.env.SMTP_USER,
       to: email,
-      subject: subject,
+      subject,
       html: getActionMessage(title, description, btnText, btnLink),
     });
-    console.log('email sent successfully');
   } catch (error) {
-    console.log(
+    console.error(
       'email not sent',
       process.env.SMTP_HOST,
       process.env.SMTP_PORT,
       process.env.SMTP_USER,
-      process.env.SMTP_PASSWORD
+      process.env.SMTP_PASSWORD,
     );
-    console.log(error);
+    console.error(error);
   }
 };
 

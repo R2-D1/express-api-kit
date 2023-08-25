@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+
 const isAdminMiddleware = (request, response, next) => {
   const authToken = request.headers.authorization?.split(' ')[1];
 
@@ -26,6 +27,8 @@ const isAdminMiddleware = (request, response, next) => {
   }
 
   next();
+
+  return next;
 };
 
 module.exports = isAdminMiddleware;

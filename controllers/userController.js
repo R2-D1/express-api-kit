@@ -1,9 +1,9 @@
-const User = require('../models/userModel');
 const bcrypt = require('bcryptjs');
 const { validationResult } = require('express-validator');
-const Invite = require('../models/inviteModel');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const Invite = require('../models/inviteModel');
+const User = require('../models/userModel');
 const sendEmail = require('../services/emailService');
 
 exports.sungUp = async (request, response) => {
@@ -15,7 +15,7 @@ exports.sungUp = async (request, response) => {
     });
   }
 
-  const token = request.params.token;
+  const { token } = request.params;
   const invite = await Invite.findOne({ token });
   if (!invite) {
     return response.status(400).json({
@@ -37,11 +37,11 @@ exports.sungUp = async (request, response) => {
     await User.create(user);
     // remove invite
     invite.delete();
-    response.status(201).json({
+    return response.status(201).json({
       success: true,
     });
   } catch (error) {
-    response.status(400).json({
+    return response.status(400).json({
       success: false,
       message: error.message,
     });
@@ -49,7 +49,7 @@ exports.sungUp = async (request, response) => {
 };
 
 exports.checkResetPasswordToken = async (request, response) => {
-  const token = request.params.token;
+  const { token } = request.params;
   const isTokenValid = await User.findOne({ reset_password_token: token });
 
   if (isTokenValid) {
@@ -73,7 +73,7 @@ exports.resetPassword = async (request, response) => {
     });
   }
 
-  const token = request.params.token;
+  const { token } = request.params;
   const user = await User.findOne({ reset_password_token: token });
   if (!user) {
     return response.status(400).json({
@@ -88,11 +88,11 @@ exports.resetPassword = async (request, response) => {
 
   try {
     await user.save();
-    response.status(201).json({
+    return response.status(201).json({
       success: true,
     });
   } catch (error) {
-    response.status(400).json({
+    return response.status(400).json({
       success: false,
       message: error.message,
     });
@@ -109,12 +109,12 @@ exports.changePassword = async (request, response) => {
   }
 
   const authToken = request.headers.authorization.split(' ')[1];
-  const password = request.body.password;
+  const { password } = request.body;
   const newPassword = request.body.new_password;
 
   try {
     const decode = jwt.verify(authToken, process.env.JWT_SECRET);
-    const email = decode.email;
+    const { email } = decode;
     const user = await User.findOne({ email });
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) {
@@ -145,12 +145,12 @@ exports.changeEmail = async (request, response) => {
   }
 
   const authToken = request.headers.authorization.split(' ')[1];
-  const password = request.body.password;
+  const { password } = request.body;
   const newEmail = request.body.email;
 
   try {
     const decode = jwt.verify(authToken, process.env.JWT_SECRET);
-    const email = decode.email;
+    const { email } = decode;
     const user = await User.findOne({ email });
     if (!user) {
       throw new Error('User not found');
@@ -185,13 +185,11 @@ exports.changeRole = async (request, response) => {
     });
   }
 
-  const id = request.params.id;
-  const role = request.body.role;
+  const { id } = request.params;
+  const { role } = request.body;
 
   try {
     const user = await User.findById(id);
-    console.log(id);
-    console.log(user);
     if (!user) {
       throw new Error('User not found');
     }
@@ -219,7 +217,7 @@ exports.forgotPassword = async (request, response) => {
     });
   }
 
-  const email = request.body.email;
+  const { email } = request.body;
   const user = await User.findOne({ email });
 
   if (!user) {
@@ -229,7 +227,7 @@ exports.forgotPassword = async (request, response) => {
     });
   }
 
-  let token = crypto.randomBytes(20).toString('hex');
+  const token = crypto.randomBytes(20).toString('hex');
   user.reset_password_token = token;
 
   try {
@@ -240,13 +238,13 @@ exports.forgotPassword = async (request, response) => {
       'Hi there!',
       'It looks like you forgot your password, follow the link below and reset it.',
       'Reset password',
-      'http://localhost:50946/reset-password/' + token
+      `http://localhost:50946/reset-password/${token}`,
     );
-    response.status(201).json({
+    return response.status(201).json({
       success: true,
     });
   } catch (error) {
-    response.status(400).json({
+    return response.status(400).json({
       success: false,
       message: 'Error while reset password',
     });
@@ -269,20 +267,19 @@ exports.login = async (request, response) => {
   const jwtToken = jwt.sign(
     { email, role: user.role },
     process.env.JWT_SECRET,
-    { expiresIn: '432000s' }
+    { expiresIn: '432000s' },
   );
 
   if (isPasswordCorrect) {
-    response.status(200).json({
+    return response.status(200).json({
       success: true,
       token: jwtToken,
     });
-  } else {
-    response.status(400).json({
-      success: false,
-      message: errorMessage,
-    });
   }
+  return response.status(400).json({
+    success: false,
+    message: errorMessage,
+  });
 };
 
 exports.getAllUsers = async (request, response) => {
