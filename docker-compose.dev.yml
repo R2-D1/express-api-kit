@@ -10,7 +10,6 @@ services:
         NODE_ENV: development
     volumes:
       - ./:/app
-      - /app/node_modules
     environment:
       - NODE_ENV=development
     command: npm run dev

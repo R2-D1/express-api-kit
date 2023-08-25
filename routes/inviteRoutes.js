@@ -5,18 +5,89 @@ const isAdminMiddleware = require("../middlewares/isAdminMiddleware");
 
 const router = express.Router();
 
-// invite user by email
+/**
+ * @swagger
+ * /invites:
+ *   post:
+ *     summary: Invite user by email
+ *     description: Send an invitation to a user by email.
+ *     tags:
+ *       - Invitations
+ *     parameters:
+ *       - name: email
+ *         description: Email address to send the invitation to.
+ *         in: formData
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: Invitation successfully sent.
+ *       400:
+ *         description: Invalid email provided.
+ */
+
 router.post("/", isAdminMiddleware, check('email')
     .isEmail()
     .withMessage('Email is invalid'), inviteController.createInvite);
 
-// check token is valid
+/**
+ * @swagger
+ * /invites/check-token/{token}:
+ *   get:
+ *     summary: Check if a token is valid
+ *     tags:
+ *       - Invitations
+ *     parameters:
+ *       - name: token
+ *         description: Token to check validity for.
+ *         in: path
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: Token is valid.
+ *       400:
+ *         description: Token is invalid or expired.
+ */
+
 router.get('/check-token/:token', inviteController.checkToken);
 
-// get all invites
+/**
+ * @swagger
+ * /invites:
+ *   get:
+ *     summary: Get all invites
+ *     description: Retrieve a list of all invites.
+ *     tags:
+ *       - Invitations
+ *     responses:
+ *       200:
+ *         description: List of all invites.
+ */
+
 router.get('/', isAdminMiddleware, inviteController.getAllInvites);
 
-// remove invite
+/**
+ * @swagger
+ * /invites/{id}:
+ *   delete:
+ *     summary: Remove an invite
+ *     description: Delete an invite by its ID.
+ *     tags:
+ *       - Invitations
+ *     parameters:
+ *       - name: id
+ *         description: ID of the invite to delete.
+ *         in: path
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: Invite successfully deleted.
+ *       404:
+ *         description: Invite not found.
+ */
+
 router.delete('/:id', isAdminMiddleware, inviteController.deleteInvite);
 
 module.exports = router;
