@@ -1,4 +1,4 @@
-const nodemailer = require("nodemailer");
+const nodemailer = require('nodemailer');
 
 const getActionMessage = (title, description, btnText, btnLink) => `
 <!doctype html>
@@ -147,29 +147,42 @@ const getActionMessage = (title, description, btnText, btnLink) => `
 </html>
 `;
 
-const sendEmail = async (email, subject, title, description, btnText, btnLink) => {
-    try {
-        const transporter = nodemailer.createTransport({
-            host: process.env.SMTP_HOST,
-            port: process.env.SMTP_PORT,
-            secure: true,
-            auth: {
-                user: process.env.SMTP_USER,
-                pass: process.env.SMTP_PASSWORD,
-            },
-        });
+const sendEmail = async (
+  email,
+  subject,
+  title,
+  description,
+  btnText,
+  btnLink
+) => {
+  try {
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: process.env.SMTP_PORT,
+      secure: true,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASSWORD,
+      },
+    });
 
-        await transporter.sendMail({
-            from: process.env.SMTP_USER,
-            to: email,
-            subject: subject,
-            html: getActionMessage(title, description, btnText, btnLink),
-        });
-        console.log("email sent successfully");
-    } catch (error) {
-        console.log("email not sent", process.env.SMTP_HOST, process.env.SMTP_PORT, process.env.SMTP_USER, process.env.SMTP_PASSWORD);
-        console.log(error);
-    }
+    await transporter.sendMail({
+      from: process.env.SMTP_USER,
+      to: email,
+      subject: subject,
+      html: getActionMessage(title, description, btnText, btnLink),
+    });
+    console.log('email sent successfully');
+  } catch (error) {
+    console.log(
+      'email not sent',
+      process.env.SMTP_HOST,
+      process.env.SMTP_PORT,
+      process.env.SMTP_USER,
+      process.env.SMTP_PASSWORD
+    );
+    console.log(error);
+  }
 };
 
 module.exports = sendEmail;

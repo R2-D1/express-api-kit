@@ -1,9 +1,8 @@
-const express = require("express");
-const userController = require("../controllers/userController");
-const {check} = require('express-validator');
-const isAdminMiddleware = require("../middlewares/isAdminMiddleware");
-const isLoggedInMiddleware = require("../middlewares/isLoggedInMiddleware");
-
+const express = require('express');
+const userController = require('../controllers/userController');
+const { check } = require('express-validator');
+const isAdminMiddleware = require('../middlewares/isAdminMiddleware');
+const isLoggedInMiddleware = require('../middlewares/isLoggedInMiddleware');
 
 const router = express.Router();
 
@@ -33,14 +32,17 @@ const router = express.Router();
  *         description: Signup successful
  */
 
-router.post("/signup/:token",
-    check('password')
-        .isLength({min: 6})
-        .withMessage('Must be at least 6 chars long')
-        .matches(/\d/)
-        .withMessage('Must contain a number')
-        .matches(/[A-Za-z]/)
-        .withMessage('Must contain a character'), userController.sungUp);
+router.post(
+  '/signup/:token',
+  check('password')
+    .isLength({ min: 6 })
+    .withMessage('Must be at least 6 chars long')
+    .matches(/\d/)
+    .withMessage('Must contain a number')
+    .matches(/[A-Za-z]/)
+    .withMessage('Must contain a character'),
+  userController.sungUp
+);
 
 /**
  * @swagger
@@ -82,7 +84,7 @@ router.post("/signup/:token",
  *         description: Token not found
  */
 
-router.get('/check-token/:token', userController.checkResetPasswordToken)
+router.get('/check-token/:token', userController.checkResetPasswordToken);
 
 /**
  * @swagger
@@ -137,14 +139,17 @@ router.get('/check-token/:token', userController.checkResetPasswordToken)
  *         description: Token not found
  */
 
-router.post("/reset-password/:token",
-    check('password')
-        .isLength({min: 6})
-        .withMessage('Must be at least 6 chars long')
-        .matches(/\d/)
-        .withMessage('Must contain a number')
-        .matches(/[A-Za-z]/)
-        .withMessage('Must contain a character'), userController.resetPassword);
+router.post(
+  '/reset-password/:token',
+  check('password')
+    .isLength({ min: 6 })
+    .withMessage('Must be at least 6 chars long')
+    .matches(/\d/)
+    .withMessage('Must contain a number')
+    .matches(/[A-Za-z]/)
+    .withMessage('Must contain a character'),
+  userController.resetPassword
+);
 
 /**
  * @swagger
@@ -202,14 +207,18 @@ router.post("/reset-password/:token",
  *                   example: Not authorized
  */
 
-router.post("/change-password/", isLoggedInMiddleware,
-    check('new_password')
-        .isLength({min: 6})
-        .withMessage('Must be at least 6 chars long')
-        .matches(/\d/)
-        .withMessage('Must contain a number')
-        .matches(/[A-Za-z]/)
-        .withMessage('Must contain a character'), userController.changePassword);
+router.post(
+  '/change-password/',
+  isLoggedInMiddleware,
+  check('new_password')
+    .isLength({ min: 6 })
+    .withMessage('Must be at least 6 chars long')
+    .matches(/\d/)
+    .withMessage('Must contain a number')
+    .matches(/[A-Za-z]/)
+    .withMessage('Must contain a character'),
+  userController.changePassword
+);
 
 /**
  * @swagger
@@ -238,10 +247,12 @@ router.post("/change-password/", isLoggedInMiddleware,
  *         description: Email changed successfully
  */
 
-router.post("/change-email", isLoggedInMiddleware, check('email')
-    .isEmail()
-    .withMessage('Email is invalid'), userController.changeEmail);
-
+router.post(
+  '/change-email',
+  isLoggedInMiddleware,
+  check('email').isEmail().withMessage('Email is invalid'),
+  userController.changeEmail
+);
 
 /**
  * @swagger
@@ -269,8 +280,7 @@ router.post("/change-email", isLoggedInMiddleware, check('email')
  *         description: Logged in successfully
  */
 
-router.post("/login", userController.login);
-
+router.post('/login', userController.login);
 
 /**
  * @swagger
@@ -295,10 +305,11 @@ router.post("/login", userController.login);
  *         description: Password reset initiated
  */
 
-router.post("/forgot-password", check('email')
-    .isEmail()
-    .withMessage('Email is invalid'), userController.forgotPassword);
-
+router.post(
+  '/forgot-password',
+  check('email').isEmail().withMessage('Email is invalid'),
+  userController.forgotPassword
+);
 
 /**
  * @swagger
@@ -333,10 +344,12 @@ router.post("/forgot-password", check('email')
  *         description: Role changed successfully
  */
 
-router.put("/change-role/:id", isAdminMiddleware, check('role')
-    .isIn(['user', 'admin'])
-    .withMessage('Role is not available'), userController.changeRole);
-
+router.put(
+  '/change-role/:id',
+  isAdminMiddleware,
+  check('role').isIn(['user', 'admin']).withMessage('Role is not available'),
+  userController.changeRole
+);
 
 /**
  * @swagger
@@ -353,7 +366,6 @@ router.put("/change-role/:id", isAdminMiddleware, check('role')
  */
 
 router.get('/', isAdminMiddleware, userController.getAllUsers);
-
 
 /**
  * @swagger
@@ -375,6 +387,5 @@ router.get('/', isAdminMiddleware, userController.getAllUsers);
  */
 
 router.delete('/:id', isAdminMiddleware, userController.deleteUser);
-
 
 module.exports = router;
